@@ -1,0 +1,36 @@
+package ru.sunlab.shopbasket.model;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+
+@Entity
+@Data
+@Table(name = "product_count")
+public class ProductCount {
+
+    public ProductCount() {
+        this.numberOfInterestedClients = 1;
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotNull
+    @Column(name = "product_id", nullable = false)
+    private Long productId;
+
+    @NotNull
+    @Column(name = "quantity_stock", nullable = false)
+    private Integer quantity;
+
+    @NotNull
+    @Column(name = "store_id", nullable = false)
+    private Long storeId;
+
+    @Column(name = "number_interested")
+    private Integer numberOfInterestedClients;
+}
