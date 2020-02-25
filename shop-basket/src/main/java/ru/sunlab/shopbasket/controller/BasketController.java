@@ -47,7 +47,7 @@ public class BasketController {
         return ResponseEntity.ok(MapperUtil.mapToBasketViewDto(basketList));
     }
 
-    @GetMapping("createorder/{clientId}")
+    @GetMapping("/createorder/{clientId}")
     public ResponseEntity<OrderDto> createOrder(@PathVariable Long clientId, @RequestBody Long storeId){
         OrderDto orderDto = basketService.createOrder(clientId, storeId);
         return ResponseEntity.ok(orderDto);
