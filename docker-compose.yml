@@ -1,0 +1,90 @@
+version: "3"
+services:
+  rabbitmq:
+    image: "rabbitmq:3.8.2-management"
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - inner_network
+    volumes:
+      - "rabbitmq_data:/var/lib/rabbitmq"
+
+  postgres_basket:
+    image: postgres:12-alpine
+    container_name: postgres_basket
+    ports:
+      - "5442:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "root"
+      POSTGRES_DB: "shop_basket"
+    networks:
+      - inner_network
+    volumes:
+      - "postgres_basket:/var/lib/postgresql/data"
+
+  postgres_shop:
+    image: postgres:12-alpine
+    container_name: postgres_shop
+    ports:
+      - "5452:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "root"
+      POSTGRES_DB: "shop"
+    networks:
+      - inner_network
+    volumes:
+      - "postgres_shop:/var/lib/postgresql/data"
+
+  basket:
+    build: ./shop-basket
+    container_name: shop-basket
+    ports:
+      - "8090:8090"
+    networks:
+      - inner_network
+    depends_on:
+      - postgres_basket
+      - rabbitmq
+
+  shop:
+    build: ./shop
+    container_name: shop
+    ports:
+      - "8080:8080"
+    networks:
+      - inner_network
+    depends_on:
+      - postgres_shop
+      - rabbitmq
+
+  bank:
+    build: ./shop-bank
+    container_name: shop-bank
+    ports:
+      - "8100:8100"
+    networks:
+      - inner_network
+    depends_on:
+      - rabbitmq
+
+  email:
+    build: ./shop-email-informer
+    container_name: shop-email-informer
+    networks:
+      - inner_network
+    depends_on:
+      - rabbitmq
+
+volumes:
+  rabbitmq_data:
+  postgres_shop:
+  postgres_basket:
+
+networks:
+  inner_network:
+    driver: bridge
+
